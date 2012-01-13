@@ -28,6 +28,9 @@ http {
         break;
       }
 
+      # Add trailing slash to */wp-admin requests.
+      # rewrite         /wp-admin$ $scheme://$host$uri/ permanent;
+
       # redirect to feedburner.
       # if ($http_user_agent !~ FeedBurner) {
       #   rewrite ^/feed/?$ http://feeds.feedburner.com/feedburner-feed-id last;
@@ -46,43 +49,32 @@ http {
       # fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 
-    location = /favicon.ico {
-      access_log      off;
-      log_not_found   off;
-    }
+    # location = /favicon.ico {
+    #   return 204;
+    #   access_log      off;
+    #   log_not_found   off;
+    # }
+
+    # location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {
+    #   expires max;
+    #   log_not_found off;
+    # }
+
+    # Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
+    # location ~ /\. {
+    #   deny all;
+    #   access_log off;
+    #   log_not_found off;
+    # }
+
+    # location = /robots.txt {
+    #   allow all;
+    #   log_not_found off;
+    #   access_log off;
+    # }
+
+    # location / {
+    #   try_files $uri $uri/ /index.php?$args;
+    # }
   }
 }
-
-# server { 
-#        if ($http_host != "www.example.com") {
-#                  rewrite ^ http://www.example.com$request_uri permanent;
-#        }
-# 
-#        index index.php index.html;
-# 
-#        location = /robots.txt {
-#                 allow all;
-#                 log_not_found off;
-#                 access_log off;
-#        }
-# 
-#        # Deny all attempts to access hidden files such as .htaccess, .htpasswd, .DS_Store (Mac).
-#        location ~ /\. {
-#                 deny all;
-#                 access_log off;
-#                 log_not_found off;
-#        }
-# 
-#        location / {
-#                 try_files $uri $uri/ /index.php?$args;
-#        }
-# 
-#        # Add trailing slash to */wp-admin requests.
-#        rewrite /wp-admin$ $scheme://$host$uri/ permanent;
-# 
-#        location ~*  \.(jpg|jpeg|png|gif|css|js|ico)$ {
-#                 expires max;
-#                 log_not_found off;
-#        }
-# 
-# }

@@ -35,12 +35,13 @@ http {
         # rewrite ^(.+)$ /index.php?q=$1 last;
       }
 
-      # location ~ .*\.php[345]?$ {
-      #   include         /app/nginx/conf/fastcgi_params;
-      #   fastcgi_pass    unix:/tmp/fastcgi.socket;
-      #   fastcgi_index   index.php;
-      #   fastcgi_param SCRIPT_FILENAME /app/www$fastcgi_script_name;
-      # }
+      location ~ .*\.php[345]?$ {
+        include         /app/nginx/conf/fastcgi_params;
+        fastcgi_pass    unix:/tmp/php-fastcgi.socket;
+        fastcgi_index   index.php;
+        fastcgi_param SCRIPT_FILENAME /app/www$fastcgi_script_name;
+      }
+
        # fastcgi_split_path_info ^(.+\.php)(/.+)$;
         #         #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
         # 

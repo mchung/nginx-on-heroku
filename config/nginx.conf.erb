@@ -35,6 +35,8 @@ http {
 
       location ~ .*\.php[345]?$ {
         include         /app/vendor/nginx/conf/fastcgi_params;
+        fastcgi_param HTTPS on; # force SSL
+
         fastcgi_pass    unix:/tmp/php-fastcgi.socket;
         fastcgi_index   index.php;
         fastcgi_param   SCRIPT_FILENAME /app/www$fastcgi_script_name;

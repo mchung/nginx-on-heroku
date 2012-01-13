@@ -2,68 +2,63 @@ worker_processes  1;
 daemon off;
 
 events {
-    worker_connections  1024;
+  worker_connections  1024;
 }
 
 http {
-    include             mime.types;
-    default_type        application/octet-stream;
-    sendfile            on;
-    keepalive_timeout   65;
-    gzip  on;
+  include             mime.types;
+  default_type        application/octet-stream;
+  sendfile            on;
+  keepalive_timeout   65;
+  gzip  on;
 
-    server {
-      listen            <%= ENV['PORT'] %>;
-      server_name       localhost;
+  server {
+    listen            <%= ENV['PORT'] %>;
+    server_name       localhost;
 
-      location / {
-        root            /app/www/;
-        index           index.php;
+    location / {
+      root            /app/www/;
+      index           index.php;
 
-        # wordpress fancy rewrites
-        if (-f $request_filename) {
-          break;
-        }
-        if (-d $request_filename) {
-          break;
-        }
-
-        # redirect to feedburner.
-        # if ($http_user_agent !~ FeedBurner) {
-        #   rewrite ^/feed/?$ http://feeds.feedburner.com/feedburner-feed-id last;
-        # }
-
-        rewrite         ^(.+)$ /index.php?q=$1 last;
+      # wordpress fancy rewrites
+      if (-f $request_filename) {
+        break;
+      }
+      if (-d $request_filename) {
+        break;
       }
 
-      location ~ .*\.php[345]?$ {
-        include         /app/vendor/nginx/conf/fastcgi_params;
-        fastcgi_param   HTTPS on; # force SSL
+      # redirect to feedburner.
+      # if ($http_user_agent !~ FeedBurner) {
+      #   rewrite ^/feed/?$ http://feeds.feedburner.com/feedburner-feed-id last;
+      # }
 
-        fastcgi_pass    unix:/tmp/php-fastcgi.socket;
-        fastcgi_index   index.php;
-        fastcgi_param   SCRIPT_FILENAME /app/www$fastcgi_script_name;
-      }
-
-      location = /favicon.ico {
-        log_not_found   off;
-        access_log      off;
-      }
+      rewrite         ^(.+)$ /index.php?q=$1 last;
     }
+
+    location ~ .*\.php[345]?$ {
+      include         /app/vendor/nginx/conf/fastcgi_params;
+      fastcgi_param   HTTPS on; # force SSL
+
+      fastcgi_pass    unix:/tmp/php-fastcgi.socket;
+      fastcgi_index   index.php;
+      fastcgi_param   SCRIPT_FILENAME /app/www$fastcgi_script_name;
+      # fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location = /favicon.ico {
+      access_log      off;
+      log_not_found   off;
+    }
+  }
 }
 
-# server {
-#        listen 80;
-#        server_name www.example.com example.com;
-#        root /var/www/www.example.com/web;
-# 
+# server { 
 #        if ($http_host != "www.example.com") {
 #                  rewrite ^ http://www.example.com$request_uri permanent;
 #        }
 # 
 #        index index.php index.html;
-# 
-
 # 
 #        location = /robots.txt {
 #                 allow all;
@@ -90,9 +85,4 @@ http {
 #                 log_not_found off;
 #        }
 # 
-#        location ~ \.php$ {
-#                 include /etc/nginx/fastcgi_params;
-#                 fastcgi_pass 127.0.0.1:9000;
-#                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-#        }
 # }

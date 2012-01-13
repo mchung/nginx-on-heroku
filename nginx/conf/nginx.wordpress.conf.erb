@@ -1,0 +1,42 @@
+worker_processes  1;
+daemon off;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+    # gzip  on;
+
+    server {
+      listen      <%= ENV['PORT'] %>;
+      server_name localhost;
+
+      location / {
+        root      /app/www/;
+        index     index.php;
+        # wordpress fancy rewrites
+        if (-f $request_filename) {
+          break;
+        }
+        if (-d $request_filename) {
+          break;
+        }
+        # if ($http_user_agent !~ FeedBurner) {
+        #   rewrite ^/feed/?$ http://feeds.feedburner.com/feedburner-feed-id last;
+        # }
+        rewrite ^(.+)$ /index.php?q=$1 last;
+      }
+
+      # location ~ .*\.php[345]?$ {
+      #   include         /app/nginx/conf/fastcgi_params;
+      #   fastcgi_pass    unix:/tmp/fastcgi.socket;
+      #   fastcgi_index   index.php;
+      #   fastcgi_param SCRIPT_FILENAME /app/www$fastcgi_script_name;
+      # }
+    }
+}

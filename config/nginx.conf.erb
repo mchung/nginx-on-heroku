@@ -19,6 +19,7 @@ http {
       location / {
         root      /app/www/;
         index     index.php;
+
         # wordpress fancy rewrites
         # if (-f $request_filename) {
         #   break;
@@ -33,10 +34,10 @@ http {
       }
 
       location ~ .*\.php[345]?$ {
-        include         /app/nginx/conf/fastcgi_params;
+        include         /app/vendor/nginx/conf/fastcgi_params;
         fastcgi_pass    unix:/tmp/php-fastcgi.socket;
         fastcgi_index   index.php;
-        fastcgi_param SCRIPT_FILENAME /app/www$fastcgi_script_name;
+        fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
       }
 
        # fastcgi_split_path_info ^(.+\.php)(/.+)$;
